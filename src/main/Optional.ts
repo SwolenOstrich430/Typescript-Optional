@@ -3,11 +3,14 @@ import NoSuchElementError from "./NoSuchElementError";
 import Consumer from "./Consumer";
 import Predicate from "./Predicate";
 import JFunction from "./JFunction";
+import Supplier from "./Supplier";
+
 
 export default class Optional<T> {
     private value?: T;
     private static OF_ERROR_MESSAGE = "value parameter must be non-null";
-    private GET_ERROR_MESSAGE = "value instance variable must be non-null";
+    private VALUE_NOT_PRESENT = "value instance variable must be non-null";
+    private OR_ELSE_THROW_MESSAGE = "Error and value are not present";
 
     public static empty<T>(): Optional<T> {
         return new Optional<T>();
@@ -34,7 +37,7 @@ export default class Optional<T> {
 
     get(): T | undefined {
         if(!this.isPresent()) {
-            throw new NoSuchElementError(this.GET_ERROR_MESSAGE);
+            throw new NoSuchElementError(this.VALUE_NOT_PRESENT);
         }
         return this.value;
     }
@@ -50,7 +53,7 @@ export default class Optional<T> {
 
     filter(predicate: Predicate<T>): Optional<T | null> {
         if(!this.isPresent()) {
-            throw new NoSuchElementError(this.GET_ERROR_MESSAGE);
+            throw new NoSuchElementError(this.VALUE_NOT_PRESENT);
         }
 
         if(predicate.test(this.value)) {
@@ -76,9 +79,38 @@ export default class Optional<T> {
         return otherValue;
     }
 
+    orElseGet(supplier: Supplier<T>): T {
+        if(this.value !== undefined && this.value !== null) return this.value;
+        let supplierVal = supplier.get();
+
+        if(supplierVal === undefined || supplierVal === null) {
+            throw new NoSuchElementError(this.VALUE_NOT_PRESENT);
+        }
+
+        return supplierVal;
+    }
+
+    orElseThrow(errorSupplier: Supplier<Error>): T {
+        if(this.value === undefined || this.value === null)  {
+            let err: Error | undefined = errorSupplier.get();
+            if(err) throw err;
+            throw new Error(this.OR_ELSE_THROW_MESSAGE);
+        } else {
+            return this.value;
+        }
+    }
+
     typeof(): string {
         if(this.value === null) return "undefined";
         return typeof this.value
+    }
+
+    toString(): string {
+        if(this.value === undefined || this.value === null) {
+            return "Optional[empty]";
+        }
+
+        return `Optional[${this.value}]`;
     }
 
 }
