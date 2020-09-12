@@ -1,0 +1,31 @@
+{
+  "name": "typescript-optional",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/main.tsx",
+  "scripts": {
+    "tscompile": "node_modules/typescript/tsc",
+    "test": "jest"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {},
+  "jest": {
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "transform": {
+      "\\.(ts|tsx)$": "/Users/peter/Documents/bootcamp/projects/jquery-clone/node_modules/ts-jest"
+    },
+    "testRegex": "test.*\\.(ts|tsx|js)$"
+  },
+  "devDependencies": {
+    "@types/jest": "^26.0.13",
+    "@types/node": "^14.6.4",
+    "jest": "^26.4.2",
+    "ts-jest": "^26.3.0",
+    "typescript": "4.0.2"
+  }
+}
